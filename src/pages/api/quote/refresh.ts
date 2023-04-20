@@ -1,6 +1,6 @@
-import { serializeCookie } from '@/lib/serializeCookie';
-import { generateAccessToken } from '@/utils/jwt';
-import jwt from 'jsonwebtoken';
+import { serializeCookie } from "lib/serializeCookie";
+import { generateAccessToken } from "lib/jwt";
+import jwt from "jsonwebtoken";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -11,12 +11,15 @@ export default async function handler(
     return res.status(401).json({ message: "You are not authorized." });
   }
 
-  let decoded = '';
+  let decoded = "";
 
   try {
-    decoded = jwt.verify(req.cookies.refreshToken, process.env.SECRET_REFRESH_TOKEN!);
+    decoded = jwt.verify(
+      req.cookies.refreshToken,
+      process.env.SECRET_REFRESH_TOKEN!
+    );
   } catch (err) {
-    return res.status(405).send('Token is invalid');
+    return res.status(405).send("Token is invalid");
   }
 
   const refreshedJwt = generateAccessToken();

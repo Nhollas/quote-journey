@@ -1,4 +1,4 @@
-import { generateAccessToken, generateRefreshToken } from "@/utils/jwt";
+import { generateAccessToken, generateRefreshToken } from "lib/jwt";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -12,12 +12,10 @@ export default async function handler(
   const jwt = generateAccessToken();
   const refreshToken = generateRefreshToken();
 
-  return res.status(200).json(
-    {
-      jwt, 
-      refreshToken, 
-      jwtExpiry: 30, 
-      refreshTokenExpiry: 60 * 60 * 24
-    }
-  );
+  return res.status(200).json({
+    jwt,
+    refreshToken,
+    jwtExpiry: 30,
+    refreshTokenExpiry: 60 * 60 * 24,
+  });
 }
