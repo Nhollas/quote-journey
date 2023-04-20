@@ -1,15 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface UseFetchResponse {
-  fetchData: <T>(endpoint: string) => Promise<T | null>;
+  fetchData: <T>(endpoint: string) => Promise<T | undefined>;
   error?: string | undefined;
 }
 
 export function useFetch(): UseFetchResponse {
   const [error, setError] = useState<string | undefined>(undefined);
 
-  async function fetchData<T>(endpoint: string): Promise<T | null> {
+  async function fetchData<T>(endpoint: string): Promise<T | undefined> {
     try {
       const response = await axios.get<T>(endpoint, {
         headers: {
@@ -20,24 +20,26 @@ export function useFetch(): UseFetchResponse {
       const { data } = response;
 
       return data;
-    } catch (error: any) {
-      if (error.response.status === 401) {
-        const refreshed = await refreshAccessToken();
+    } catch (error: any | AxiosError) {
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 401) {
+          const refreshed = await refreshAccessToken();
 
-        if (!refreshed) {
-          setError(
-            "Your session has expired, please refresh the page for a new session."
-          );
+          if (!refreshed) {
+            setError(
+              "Your session has expired, please refresh the page for a new session."
+            );
 
-          return null;
+            return undefined;
+          }
+
+          return await fetchData<T>(endpoint);
         }
-
-        return await fetchData<T>(endpoint);
-      } else {
-        setError("Something went wrong");
-
-        return null;
       }
+
+      setError("Something went wrong");
+
+      return undefined;
     }
   }
 

@@ -47,8 +47,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function Page() {
   const { fetchData, error } = useFetch();
 
-  const [address, setAddress] = useState<Address | null>(null);
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [address, setAddress] = useState<Address | undefined>(undefined);
+  const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
 
   async function getAddress() {
     const address = await fetchData<Address>(
