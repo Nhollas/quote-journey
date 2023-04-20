@@ -43,18 +43,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Quote() {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [address, setAddress] = useState(null);
+  const [vehicle, setVehicle] = useState(null);
 
-  // We cannot check if we have a JWT cookie as its httpOnly but will try anyways.
+  // We cannot check if we have a JWT cookie as its httpOnly.
+  // If we do have a refreshToken cookie it will be automatically sent with the request.
   async function attemptRefresh() {
     try {
-      await axios.post("http://localhost:3000/api/quote/refresh", {
+      await axios.get("http://localhost:3000/api/quote/refresh", {
         headers: {
           Accept: "application/json",
         },
       });
+
+      return true;
     } catch (error) {
-      setError(error);
+      return false;
     }
   }
 
@@ -65,9 +70,18 @@ export default function Quote() {
           Accept: "application/json",
         },
       });
+
+      setAddress(response.data);
     } catch (error) {
       if (error.response.status === 401) {
-        await attemptRefresh();
+        const refreshed = await attemptRefresh();
+
+        if (!refreshed) {
+          setError("Could not refresh token");
+          return;
+        }
+
+        await getAddress();
       } else {
         // Handle other errors
       }
@@ -81,9 +95,18 @@ export default function Quote() {
           Accept: "application/json",
         },
       });
+
+      setVehicle(response.data);
     } catch (error) {
       if (error.response.status === 401) {
-        await attemptRefresh();
+        const refreshed = await attemptRefresh();
+
+        if (!refreshed) {
+          setError("Could not refresh token");
+          return;
+        }
+        // We need to re-run the function that failed
+        await getVehicle();
       } else {
         // Handle other errors
       }
@@ -93,10 +116,12 @@ export default function Quote() {
   return (
     <main>
       <h1>Quote Page</h1>
-      {error && <p>{error.message}</p>}
+      {error && <p>{error}</p>}
 
       <button onClick={getAddress}>Get Address</button>
+      {address && <p>{address.postcode}</p>}
       <button onClick={getVehicle}>Get Vehicle</button>
+      {vehicle && <p>{vehicle.model}</p>}
     </main>
   );
 }
