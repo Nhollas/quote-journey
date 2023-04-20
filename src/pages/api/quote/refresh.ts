@@ -11,7 +11,7 @@ export default async function handler(
     return res.status(401).json({ message: "You are not authorized." });
   }
 
-  let decoded = "";
+  let decoded = {};
 
   try {
     decoded = jwt.verify(

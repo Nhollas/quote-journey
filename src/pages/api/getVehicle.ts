@@ -1,4 +1,4 @@
-import { verifyToken } from "@/lib/jwt";
+import { verifyToken } from "lib/jwt";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
