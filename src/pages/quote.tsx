@@ -1,7 +1,7 @@
 import { serializeCookie } from "@/lib/serializeCookie";
 import axios from "axios";
 import { GetServerSideProps } from "next";
-import { getCookie } from "cookies-next";
+import { useState } from "react";
 
 type Response = {
   jwt: string;
@@ -42,56 +42,58 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-async function getAddress() {
-  // If we don't have a JWT, we need to refresh it
-  if (!getCookie("jwt")) {
-    await axios.get("http://localhost:3000/api/quote/refresh", {
-      headers: {
-        Accept: "application/json",
-      },
-    });
-  }
-
-  try {
-    const { data } = await axios.get("http://localhost:3000/api/getAddress", {
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    console.log(data);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getVehicle() {
-  // If we don't have a JWT, we need to refresh it
-  if (!getCookie("jwt")) {
-    await axios.get("http://localhost:3000/api/quote/refresh", {
-      headers: {
-        Accept: "application/json",
-      },
-    });
-  }
-
-  try {
-    const { data } = await axios.get("http://localhost:3000/api/getVehicle", {
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    console.log(data);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export default function Quote() {
+  const [error, setError] = useState(null);
+
+  // We cannot check if we have a JWT cookie as its httpOnly but will try anyways.
+  async function attemptRefresh() {
+    try {
+      await axios.post("http://localhost:3000/api/quote/refresh", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+    } catch (error) {
+      setError(error);
+    }
+  }
+
+  async function getAddress() {
+    try {
+      const response = await axios.get("http://localhost:3000/api/getAddress", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+    } catch (error) {
+      if (error.response.status === 401) {
+        await attemptRefresh();
+      } else {
+        // Handle other errors
+      }
+    }
+  }
+
+  async function getVehicle() {
+    try {
+      const response = await axios.get("http://localhost:3000/api/getVehicle", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+    } catch (error) {
+      if (error.response.status === 401) {
+        await attemptRefresh();
+      } else {
+        // Handle other errors
+      }
+    }
+  }
+
   return (
     <main>
       <h1>Quote Page</h1>
+      {error && <p>{error.message}</p>}
 
       <button onClick={getAddress}>Get Address</button>
       <button onClick={getVehicle}>Get Vehicle</button>
