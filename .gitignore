@@ -34,3 +34,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase
+.firebase
+firebase-debug.log
+firebase-service-account.json
+
+# nextjs links types (auto generated)ß
+nextjs-routes.d.ts
