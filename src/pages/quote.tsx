@@ -1,9 +1,9 @@
 import { serializeCookie } from "lib/serializeCookie";
-import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useFetch } from "hooks/useFetch";
 import { useState } from "react";
 import { Address, Vehicle } from "types";
+import { client } from "lib/client";
 
 type Response = {
   jwt: string;
@@ -21,10 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const {
     data: { jwt, jwtExpiry, refreshToken, refreshTokenExpiry },
-  } = await axios.get<Response>("http://localhost:3000/api/session/start", {
-    headers: {
-      Accept: "application/json",
-    },
+  } = await client.get<Response>("/api/session/start", {
     params: {
       apiKey: process.env.API_KEY,
     },
@@ -51,17 +48,13 @@ export default function Page() {
   const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
 
   async function getAddress() {
-    const address = await fetchData<Address>(
-      "http://localhost:3000/api/getAddress"
-    );
+    const address = await fetchData<Address>("/api/getAddress");
 
     setAddress(address);
   }
 
   async function getVehicle() {
-    const vehicle = await fetchData<Vehicle>(
-      "http://localhost:3000/api/getVehicle"
-    );
+    const vehicle = await fetchData<Vehicle>("/api/getVehicle");
 
     setVehicle(vehicle);
   }

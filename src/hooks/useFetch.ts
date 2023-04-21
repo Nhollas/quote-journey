@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
+import { client } from "lib/client";
 
 interface UseFetchResponse {
   fetchData: <T>(endpoint: string) => Promise<T | undefined>;
@@ -11,11 +12,7 @@ export function useFetch(): UseFetchResponse {
 
   async function fetchData<T>(endpoint: string): Promise<T | undefined> {
     try {
-      const response = await axios.get<T>(endpoint, {
-        headers: {
-          Accept: "application/json",
-        },
-      });
+      const response = await client.get<T>(endpoint);
 
       const { data } = response;
 
@@ -45,11 +42,7 @@ export function useFetch(): UseFetchResponse {
 
   async function refreshAccessToken(): Promise<boolean> {
     try {
-      await axios.get("http://localhost:3000/api/quote/refresh", {
-        headers: {
-          Accept: "application/json",
-        },
-      });
+      await client.get("/api/session/refresh");
 
       return true;
     } catch (error) {
