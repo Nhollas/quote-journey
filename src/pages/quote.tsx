@@ -59,6 +59,13 @@ export default function Page() {
     setVehicle(vehicle);
   }
 
+  async function clearCookies() {
+    await client.post("/api/session/clear");
+
+    // This will fail and cause our error state to update.
+    await fetchData<Vehicle>("/api/getVehicle");
+  }
+
   return error ? (
     <section>
       <h1>Quote Page</h1>
@@ -67,10 +74,11 @@ export default function Page() {
   ) : (
     <section>
       <h1>Quote Page</h1>
+      <button onClick={clearCookies}>Clear JWT & RefreshToken</button>
       <button onClick={getAddress}>Get Address</button>
-      {address && <p>{address.line_1}</p>}
+      {address && <pre>{JSON.stringify(address, null, 2)}</pre>}
       <button onClick={getVehicle}>Get Vehicle</button>
-      {vehicle && <p>{vehicle.make}</p>}
+      {vehicle && <pre>{JSON.stringify(vehicle, null, 2)}</pre>}
     </section>
   );
 }
