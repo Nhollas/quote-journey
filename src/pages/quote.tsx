@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const {
     data: { jwt, jwtExpiry, refreshToken, refreshTokenExpiry },
-  } = await axios.get<Response>("http://localhost:3000/api/quote/start", {
+  } = await axios.get<Response>("http://localhost:3000/api/session/start", {
     headers: {
       Accept: "application/json",
     },

@@ -4,7 +4,7 @@ A "session" can be created on page load of /quote. Prior to page load we access 
 
 From here, we set 2 cookies:
 
-- **'JWT'** Cookie: holds our JWT's value and is signed with a "JWTSecret".
+- **'JWT'** Cookie: holds our JWT's value which is signed with a "JWTSecret".
 - **'RefreshToken'** Cookie: holds the value required for creating new JWT cookies. This is also another JWT that is signed with a "RefreshTokenSecret".
 
 **Note:** _The JWT cookie has a short lifetime compared to the RefreshToken cookie, this is to limit the downside of our JWT as they cannot be invalidated instantly._
@@ -19,6 +19,6 @@ The great thing here is that these cookies will pass through to the calls made t
 - We cannot invalidate JWTs, so they should have a relatively short lifespan.
 - Surely there should be some form of session backup?
 
-#### Current TODOs:
+#### What do we want?:
 
-- TODO these..
+- Prevent any external access to our BFF.
