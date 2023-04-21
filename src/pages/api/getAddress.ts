@@ -1,22 +1,7 @@
-import { verifyToken } from "lib/jwt";
+import { withAuth } from "middleware/withAuth";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (!req.cookies.jwt) {
-    return res.status(401).json({ message: "A token is required." });
-  }
-
-  const jwt = await verifyToken(req.cookies.jwt, res);
-
-  if (!jwt) {
-    return res
-      .status(401)
-      .json({ message: "The token provided was not valid." });
-  }
-
+const getAddressHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json({
     postcode: "SG1 1AA",
     latitude: 52.80926299999999,
@@ -38,4 +23,6 @@ export default async function handler(
     country: "England",
     residential: true,
   });
-}
+};
+
+export default withAuth(getAddressHandler);

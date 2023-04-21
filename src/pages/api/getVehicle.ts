@@ -1,22 +1,7 @@
-import { verifyToken } from "lib/jwt";
+import { withAuth } from "middleware/withAuth";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (!req.cookies.jwt) {
-    return res.status(401).json({ message: "A token is required." });
-  }
-
-  const jwt = await verifyToken(req.cookies.jwt, res);
-
-  if (!jwt) {
-    return res
-      .status(401)
-      .json({ message: "The token provided was not valid." });
-  }
-
+const getVehicleHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json({
     registrationNumber: "BJ52SFK",
     make: "BMW",
@@ -42,4 +27,6 @@ export default async function handler(
       days: 193,
     },
   });
-}
+};
+
+export default withAuth(getVehicleHandler);
