@@ -4,8 +4,8 @@ A "session" can be created on page load of /quote. Prior to page load we access 
 
 From here, we set 2 cookies:
 
-- **'JWT'** Cookie: holds our JWT's value.
-- **'RefreshToken'** Cookie: holds the value required for creating new JWT cookies.
+- **'JWT'** Cookie: holds our JWT's value and is signed with a "JWTSecret".
+- **'RefreshToken'** Cookie: holds the value required for creating new JWT cookies. This is also another JWT that is signed with a "RefreshTokenSecret".
 
 **Note:** _The JWT cookie has a short lifetime compared to the RefreshToken cookie, this is to limit the downside of our JWT as they cannot be invalidated instantly._
 
