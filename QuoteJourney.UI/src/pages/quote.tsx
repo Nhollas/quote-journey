@@ -1,16 +1,9 @@
-import { serializeCookie } from "lib/serializeCookie";
 import { GetServerSideProps } from "next";
 import { useFetch } from "hooks/useFetch";
 import { useState } from "react";
 import { Address, Vehicle } from "types";
 import { client } from "lib/client";
-
-type Response = {
-  jwt: string;
-  jwtExpiry: number;
-  refreshToken: string;
-  refreshTokenExpiry: number;
-};
+import { externalApiClient } from "lib/externalApiClient";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.cookies.quoteId) {
@@ -19,22 +12,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const {
-    data: { jwt, jwtExpiry, refreshToken, refreshTokenExpiry },
-  } = await client.get<Response>("/api/session/start", {
+  // Only our BFF can get a fresh quote as its protected by an API Key.
+  const response = await externalApiClient.get("/fresh-quote", {
+    headers: {
+      Accept: "application/json",
+    },
     params: {
       apiKey: process.env.API_KEY,
     },
   });
 
-  context.res.setHeader("Set-Cookie", [
-    serializeCookie("jwt", jwt, context.req, {
-      maxAge: jwtExpiry,
-    }),
-    serializeCookie("refreshToken", refreshToken, context.req, {
-      maxAge: refreshTokenExpiry,
-    }),
-  ]);
+  if (response.headers["set-cookie"]) {
+    context.res.setHeader("set-cookie", response.headers["set-cookie"]);
+  }
 
   return {
     props: {},
@@ -60,7 +50,7 @@ export default function Page() {
   }
 
   async function clearCookies() {
-    await client.post("/api/session/clear");
+    await client.post("/api/quote/clear");
 
     // This will fail and cause our error state to update.
     await fetchData<Vehicle>("/api/getVehicle");
@@ -74,7 +64,7 @@ export default function Page() {
   ) : (
     <section>
       <h1>Quote Page</h1>
-      <button onClick={clearCookies}>Clear JWT & RefreshToken</button>
+      <button onClick={clearCookies}>Clear QuoteId Cookie</button>
       <button onClick={getAddress}>Get Address</button>
       {address && <pre>{JSON.stringify(address, null, 2)}</pre>}
       <button onClick={getVehicle}>Get Vehicle</button>
