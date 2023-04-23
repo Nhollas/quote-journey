@@ -13,7 +13,7 @@ type Response = {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (context.req.cookies.refreshToken) {
+  if (context.req.cookies.quoteId) {
     return {
       props: {},
     };

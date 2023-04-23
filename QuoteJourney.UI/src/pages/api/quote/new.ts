@@ -1,4 +1,3 @@
-import { generateAccessToken, generateRefreshToken } from "lib/jwt";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -9,13 +8,10 @@ export default async function handler(
     return res.status(401).json({ message: "You are not authorized." });
   }
 
-  const jwt = generateAccessToken();
-  const refreshToken = generateRefreshToken();
+  // This would be from our database.
+  const quoteId = "ebbfc760-2885-4717-b151-bf2dc9b9cd71";
 
   return res.status(200).json({
-    jwt,
-    refreshToken,
-    jwtExpiry: 30,
-    refreshTokenExpiry: 60 * 60 * 24,
+    quoteId,
   });
 }
