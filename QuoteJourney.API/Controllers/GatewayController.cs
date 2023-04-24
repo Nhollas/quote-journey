@@ -40,9 +40,9 @@ public class GatewayController : ControllerBase
     }
     
     [HttpPost("createQuote", Name = "Create Quote")]
-    public async Task<IActionResult> CreateQuote()
+    public async Task<IActionResult> CreateQuote([FromQuery] string? ownerId)
     {
-        var quote = await _quoteService.CreateQuoteAsync();
+        var quote = await _quoteService.CreateQuoteAsync(ownerId);
         // add set cookie to the response.
         
         Response.Cookies.Append("QuoteId", quote.Id.ToString());

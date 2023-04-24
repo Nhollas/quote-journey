@@ -18,12 +18,12 @@ public class QuoteService : IQuoteService
         return await _context.Quotes.FindAsync(id);
     }
 
-    public async Task<Quote> CreateQuoteAsync()
+    public async Task<Quote> CreateQuoteAsync(string? ownerId)
     {
         var newQuote = new Quote()
         {
             Id = new Guid(),
-            OwnerId = Guid.Empty
+            OwnerId = ownerId ?? string.Empty,
         };
         
         await _context.Quotes.AddAsync(newQuote);

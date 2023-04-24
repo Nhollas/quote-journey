@@ -4,19 +4,31 @@ import { useState } from "react";
 import { Address, Vehicle } from "types";
 import { client } from "lib/client";
 import { externalApiClient } from "lib/externalApiClient";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (context.req.cookies.QuoteId) {
+  const { req, res } = context;
+  if (req.cookies.QuoteId) {
     return {
       props: {},
     };
   }
 
-  const response = await externalApiClient.post("/api/gateway/createQuote", {
-    headers: {
-      Accept: "application/json",
-    },
-  });
+  const session = await getServerSession(req, res, authOptions);
+
+  console.log(session);
+
+  const response = await externalApiClient.post(
+    session
+      ? `/api/gateway/createQuote?ownerId=${session.user.id}`
+      : `/api/gateway/createQuote`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
 
   if (response.headers["set-cookie"]) {
     context.res.setHeader("set-cookie", response.headers["set-cookie"]);

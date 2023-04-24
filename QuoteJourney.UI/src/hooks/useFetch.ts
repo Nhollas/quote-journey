@@ -14,8 +14,6 @@ export function useFetch(): UseFetchResponse {
     try {
       const response = await client.get<T>(endpoint);
 
-      console.log(response);
-
       const { data } = response;
 
       return data;

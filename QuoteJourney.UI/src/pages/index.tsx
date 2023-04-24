@@ -1,3 +1,4 @@
+import { signIn } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -12,6 +13,7 @@ export default function Home() {
       </Head>
       <main>
         <Link href="/quote">Go to quote page..</Link>
+        <button onClick={() => signIn()}>Sign in</button>
       </main>
     </>
   );
