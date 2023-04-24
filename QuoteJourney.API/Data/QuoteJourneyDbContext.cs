@@ -1,8 +1,8 @@
-﻿using Jobby.Domain.Entities;
+﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using QuoteJourney.API.Data.Entities;
 
-namespace Jobby.Persistence.Data;
+namespace QuoteJourney.API.Data;
 
 public sealed class QuoteJourneyDbContext : DbContext
 {
@@ -10,13 +10,7 @@ public sealed class QuoteJourneyDbContext : DbContext
     {
     }
 
-    public DbSet<Board> Boards { get; set; }
-    public DbSet<JobList> JobLists { get; set; }
-    public DbSet<Job> Jobs { get; set; }
-    public DbSet<JobContact> JobContacts { get; set; }
-    public DbSet<Contact> Contacts { get; set; }
-    public DbSet<Activity> Activities { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<Quote?> Quotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

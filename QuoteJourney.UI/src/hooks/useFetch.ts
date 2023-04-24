@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { client } from "lib/client";
-import { externalApiClient } from "lib/externalApiClient";
 
 interface UseFetchResponse {
   fetchData: <T>(endpoint: string) => Promise<T | undefined>;
@@ -13,7 +12,7 @@ export function useFetch(): UseFetchResponse {
 
   async function fetchData<T>(endpoint: string): Promise<T | undefined> {
     try {
-      const response = await externalApiClient.get<T>(endpoint);
+      const response = await client.get<T>(endpoint);
 
       console.log(response);
 
@@ -22,10 +21,8 @@ export function useFetch(): UseFetchResponse {
       return data;
     } catch (error: any | AxiosError) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 404) {
-          setError(
-            "Your session has expired, please refresh the page for a new session."
-          );
+        if (error.response?.status === 401) {
+          setError(error.response.data.message);
 
           return undefined;
         }
@@ -41,14 +38,4 @@ export function useFetch(): UseFetchResponse {
     error,
     fetchData,
   };
-}
-
-async function refreshAccessToken(): Promise<boolean> {
-  try {
-    await client.get("/api/session/refresh");
-
-    return true;
-  } catch (error) {
-    return false;
-  }
 }

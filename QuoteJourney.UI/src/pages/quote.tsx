@@ -6,19 +6,15 @@ import { client } from "lib/client";
 import { externalApiClient } from "lib/externalApiClient";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (context.req.cookies.quoteId) {
+  if (context.req.cookies.QuoteId) {
     return {
       props: {},
     };
   }
 
-  // Only our BFF can get a fresh quote as its protected by an API Key.
-  const response = await externalApiClient.get("/fresh-quote", {
+  const response = await externalApiClient.post("/api/gateway/createQuote", {
     headers: {
       Accept: "application/json",
-    },
-    params: {
-      apiKey: process.env.API_KEY,
     },
   });
 
@@ -50,9 +46,10 @@ export default function Page() {
   }
 
   async function clearCookies() {
-    await client.post("/api/quote/clear");
+    await client.post("/api/clearQuote");
 
     // This will fail and cause our error state to update.
+    // Probably should add something to the useFetch hook to handle this properly.
     await fetchData<Vehicle>("/api/getVehicle");
   }
 

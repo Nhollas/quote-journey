@@ -1,24 +1,13 @@
-﻿using Jobby.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using QuoteJourney.API.Data.Entities;
 
-namespace Jobby.Persistence.Data.Config;
+namespace QuoteJourney.API.Data.Config;
 
-public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
+public class QuoteConfiguration : IEntityTypeConfiguration<Quote>
 {
-    public void Configure(EntityTypeBuilder<Activity> builder)
+    public void Configure(EntityTypeBuilder<Quote> builder)
     {
-        builder.HasKey(activity => activity.Id);
-
-        builder.HasOne(x => x.Board)
-            .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.BoardId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(x => x.Job)
-            .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.JobId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.NoAction);
+        builder.HasKey(quote => quote.Id);
     }
 }
