@@ -9,7 +9,7 @@ Currently for /getAddress and /getVehicle we require a QuoteId cookie to be set 
 #### TODO:
 
 - [ ] Look at adding other authentication methods to our BFF/API Gateway.
-- [ ] Add next auth to our BFF.
+- [x] Add next auth to our BFF.
 
 #### Current Thoughts:
 

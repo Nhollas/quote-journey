@@ -17,8 +17,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const session = await getServerSession(req, res, authOptions);
 
-  console.log(session);
-
   const response = await externalApiClient.post(
     session
       ? `/api/gateway/createQuote?ownerId=${session.user.id}`

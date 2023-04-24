@@ -1,10 +1,19 @@
 import { externalApiClient } from "lib/externalApiClient";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "pages/api/auth/[...nextauth]";
 import { Quote } from "types";
 
 export const withQuoteAuth =
   (handler: NextApiHandler) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
+    const session = await getServerSession(req, res, authOptions);
+
+    // If user is already logged in then they can access our BFF.
+    if (session) {
+      return handler(req, res);
+    }
+
     if (!req.cookies.QuoteId) {
       return res.status(401).json({ message: "A QuoteId cookie is required." });
     }
