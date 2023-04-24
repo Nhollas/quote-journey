@@ -1,23 +1,19 @@
 #### Current Implementation:
 
-A "session" can be created on page load of /quote. Prior to page load we access our BFF via nexts getServerSideProps, this is powerful in the fact that we can set (HttpOnly, Secure and Same Site) cookies for our client even before the page has loaded. One **important** note is that our /api/session/start endpoint that we call here is protected with an API Key that only our BFF knows.
+Our .Net Web API is acting as our API Gateway. There is currently middleware set up on this fake gateway that will check for a secret API Key that only itself and our BFF knows.
 
-From here, we set 2 cookies:
+Our Next app is set up to have it's gateway routes in it's own API routes. Here we can utilize our authenticaiton checks to make sure that the user is logged in and has the correct permissions to access the route.
 
-- **'JWT'** Cookie: holds our JWT's value which is signed with a "JWTSecret".
-- **'RefreshToken'** Cookie: holds the value required for creating new JWT cookies. This is also another JWT that is signed with a "RefreshTokenSecret".
+Currently for /getAddress and /getVehicle we require a QuoteId cookie to be set and will be verified on the server side.
 
-**Note:** _The JWT cookie has a short lifetime compared to the RefreshToken cookie, this is to limit the downside of our JWT as they cannot be invalidated instantly._
+#### TODO:
 
-The great thing here is that these cookies will pass through to the calls made to our BFF like /getAddress and /getVehicle. If not found our BFF will send back unauthorised status codes prompting our client to first try and refresh their expired JWT cookie. If they do not have a RefreshToken cookie present at hitting /api/session/refresh endpoint they will be unable to refresh the "session". From here the only option is to refresh the page and start this process again.
+- [ ] Look at adding other authentication methods to our BFF/API Gateway.
+- [ ] Add next auth to our BFF.
 
 #### Current Thoughts:
 
-- Cookie hijacking makes me scared....
-- How should I be storing the values in my cookies? Encyption?
-- Do we want someones quote journey to be linked to a userId?
-- We cannot invalidate JWTs, so they should have a relatively short lifespan.
-- Surely there should be some form of session backup?
+- Cookie hijacking makes me scared.
 
 #### What do we want?:
 
