@@ -8,6 +8,8 @@ Currently for /getAddress and /getVehicle we require either a logged in user wit
 
 That is just one example, other routes could require different forms of authentication it's not restricted to a single thing.
 
+![Design](https://i.imgur.com/JK4zvUe.png)
+
 #### How to run:
 
 - Clone this repo.
