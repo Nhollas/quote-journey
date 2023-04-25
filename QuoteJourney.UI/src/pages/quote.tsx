@@ -6,6 +6,7 @@ import { client } from "lib/client";
 import { externalApiClient } from "lib/externalApiClient";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { useSession } from "next-auth/react";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req, res } = context;
@@ -20,12 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const response = await externalApiClient.post(
     session
       ? `/api/gateway/createQuote?ownerId=${session.user.id}`
-      : `/api/gateway/createQuote`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-    }
+      : `/api/gateway/createQuote`
   );
 
   if (response.headers["set-cookie"]) {
@@ -39,6 +35,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Page() {
   const { fetchData, error } = useFetch();
+
+  const { data: session } = useSession();
 
   const [address, setAddress] = useState<Address | undefined>(undefined);
   const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
@@ -70,6 +68,7 @@ export default function Page() {
     </section>
   ) : (
     <section>
+      {session && <pre>{JSON.stringify(session, null, 2)}</pre>}
       <h1>Quote Page</h1>
       <button onClick={clearCookies}>Clear QuoteId Cookie</button>
       <button onClick={getAddress}>Get Address</button>

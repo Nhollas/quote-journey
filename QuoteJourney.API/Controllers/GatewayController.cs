@@ -44,8 +44,13 @@ public class GatewayController : ControllerBase
     {
         var quote = await _quoteService.CreateQuoteAsync(ownerId);
         // add set cookie to the response.
-        
-        Response.Cookies.Append("QuoteId", quote.Id.ToString());
+
+        Response.Cookies.Append("QuoteId", quote.Id.ToString(), new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Strict,
+            Secure = false
+        });
         
         return Ok(quote);
     }
