@@ -10,18 +10,20 @@ That is just one example, we could require a anything from a JWT, Cookie, Key et
 
 #### How to run:
 
-- Clone the repo.
+- Clone this repo.
 - Run `npm install` in the QuoteJourney.UI project.
 - Create a .env.local file in the QuoteJourney.UI project and follow the guide in the .env.local.example file.
-- Create appsettings.json file in the QuoteJourney.API project and follow the guide in the appsettings.example.json file.
+- Create appsettings.json file in the root of the QuoteJourney.API project and follow the guide in the appsettings.example.json file.
+
+**Note**: The API-KEY value must match to what you have in the .env.local file.
+
 - Add a your initial migration under /Data/Migrations.
 - Update the database with your migration.
-- ...... TODO
-
-```
+- Now you can run the API project.
+- Run `npm run dev` in the QuoteJourney.UI project.
+- That's it, you should now be able to access the nextjs app on http://localhost:3000 and the API on http://localhost:5235
 
 #### TODO:
 
-- [ ] Look at adding other authentication methods to our BFF/API Gateway.
+- [x] Look at adding other authentication methods to our BFF/API Gateway.
 - [x] Add next auth to our BFF.
-```

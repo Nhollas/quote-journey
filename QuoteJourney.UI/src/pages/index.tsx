@@ -1,8 +1,10 @@
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 
 export default function Home() {
+  const { data: session } = useSession();
+
   return (
     <>
       <Head>
@@ -13,7 +15,14 @@ export default function Home() {
       </Head>
       <main>
         <Link href="/quote">Go to quote page..</Link>
-        <button onClick={() => signIn()}>Sign in</button>
+        {session ? (
+          <div>
+            <p>Hello, {session.user?.name}</p>
+            <button onClick={() => signOut()}>Sign Out</button>
+          </div>
+        ) : (
+          <button onClick={() => signIn()}>Sign in</button>
+        )}
       </main>
     </>
   );
