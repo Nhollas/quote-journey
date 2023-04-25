@@ -1,0 +1,15 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Authentication": {
+    "API-KEY": "API-KEY"
+  },
+  "ConnectionStrings": {
+    "QuoteJourneyConnection": "QuoteJourneyConnection"
+  }
+}
