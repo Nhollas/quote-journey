@@ -1,16 +1,15 @@
-import { externalApiClient } from "lib/externalApiClient";
+import { externalApiClient } from "clients";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "pages/api/auth/[...nextauth]";
+import { getAuth } from "@clerk/nextjs/server";
 import { Quote } from "types";
 
 export const withQuoteAuth =
   (handler: NextApiHandler) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getServerSession(req, res, authOptions);
+    const { user } = getAuth(req);
 
     // If user is already logged in then they can access our BFF.
-    if (session) {
+    if (user) {
       return handler(req, res);
     }
 

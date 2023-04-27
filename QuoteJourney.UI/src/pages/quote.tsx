@@ -2,26 +2,30 @@ import { GetServerSideProps } from "next";
 import { useFetch } from "hooks/useFetch";
 import { useState } from "react";
 import { Address, Vehicle } from "types";
-import { client } from "lib/client";
-import { externalApiClient } from "lib/externalApiClient";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
-import { useSession } from "next-auth/react";
+import { client, externalApiClient } from "clients";
+import { useAuth } from "@clerk/nextjs";
+import { getAuth } from "@clerk/nextjs/server";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req } = context;
   if (req.cookies.QuoteId) {
     return {
       props: {},
     };
   }
 
-  const session = await getServerSession(req, res, authOptions);
+  const { userId, getToken } = getAuth(req);
 
   const response = await externalApiClient.post(
-    session
-      ? `/api/gateway/createQuote?ownerId=${session.user.id}`
-      : `/api/gateway/createQuote`
+    `/api/gateway/createQuote`,
+    null,
+    userId
+      ? {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        }
+      : {}
   );
 
   if (response.headers["set-cookie"]) {
@@ -36,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function Page() {
   const { fetchData, error } = useFetch();
 
-  const { data: session } = useSession();
+  const { userId } = useAuth();
 
   const [address, setAddress] = useState<Address | undefined>(undefined);
   const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
@@ -68,7 +72,7 @@ export default function Page() {
     </section>
   ) : (
     <section>
-      {session && <pre>{JSON.stringify(session, null, 2)}</pre>}
+      {userId && <pre>{JSON.stringify(userId, null, 2)}</pre>}
       <h1>Quote Page</h1>
       <button onClick={clearCookies}>Clear QuoteId Cookie</button>
       <button onClick={getAddress}>Get Address</button>

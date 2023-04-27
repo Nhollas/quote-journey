@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { client } from "lib/client";
+import { client } from "clients";
 
 interface UseFetchResponse {
   fetchData: <T>(endpoint: string) => Promise<T | undefined>;

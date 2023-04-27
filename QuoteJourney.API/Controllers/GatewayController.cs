@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuoteJourney.API.Interfaces;
 
@@ -10,15 +12,18 @@ public class GatewayController : ControllerBase
     private readonly IVehicleService _vehicleService;
     private readonly IAddressService _addressService;
     private readonly IQuoteService _quoteService;
+    private readonly IHttpContextAccessor _contextAccessor;
 
     public GatewayController(
         IVehicleService vehicleService,
         IAddressService addressService,
-        IQuoteService quoteService)
+        IQuoteService quoteService, 
+        IHttpContextAccessor contextAccessor)
     {
         _vehicleService = vehicleService;
         _addressService = addressService;
         _quoteService = quoteService;
+        _contextAccessor = contextAccessor;
     }
     
     [HttpGet("getAddress", Name = "Get Address")]
@@ -40,8 +45,10 @@ public class GatewayController : ControllerBase
     }
     
     [HttpPost("createQuote", Name = "Create Quote")]
-    public async Task<IActionResult> CreateQuote([FromQuery] string? ownerId)
+    public async Task<IActionResult> CreateQuote()
     {
+        string? ownerId = _contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
         var quote = await _quoteService.CreateQuoteAsync(ownerId);
         // add set cookie to the response.
 

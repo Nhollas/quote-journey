@@ -1,5 +1,10 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using QuoteJourney.API.Data;
 using QuoteJourney.API.Interfaces;
 using QuoteJourney.API.Middleware;
@@ -18,6 +23,34 @@ builder.Services.AddControllers()
 
 builder.Services.AddDbContext<QuoteJourneyDbContext>(c =>
     c.UseSqlServer(configuration.GetConnectionString("QuoteJourneyConnection")));
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+        {
+            string pem = configuration.GetSection("Authentication:CLERK_JWT_VERIFICATION_KEY").Value!;
+            string[] splitPem = Regex.Matches(pem, ".{1,64}").Select(m => m.Value).ToArray();
+            string publicKey = "-----BEGIN PUBLIC KEY-----\n" + string.Join("\n", splitPem) + "\n-----END PUBLIC KEY-----";
+            RSA rsa = RSA.Create();
+            rsa.ImportFromPem(publicKey);
+            SecurityKey issuerSigningKey = new RsaSecurityKey(rsa);
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = "https://measured-bird-88.clerk.accounts.dev",
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateAudience = false,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
+                IssuerSigningKey = issuerSigningKey
+            };
+        }
+    );
+
 
 builder.Services.AddCors(options =>
 {
@@ -51,6 +84,9 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseMiddleware<ApiKeyMiddleware>(configuration.GetSection("Authentication:API-KEY").Value);
 
