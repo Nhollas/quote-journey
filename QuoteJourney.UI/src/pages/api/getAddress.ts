@@ -1,3 +1,4 @@
+import { withQuoteAuth } from "authWrappers/withQuoteAuth";
 import { externalApiClient } from "clients";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Address } from "types";
@@ -10,4 +11,4 @@ const getAddressHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json(address);
 };
 
-export default getAddressHandler;
+export default withQuoteAuth(getAddressHandler);

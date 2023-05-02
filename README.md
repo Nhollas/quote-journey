@@ -24,8 +24,3 @@ That is just one example, other routes could require different forms of authenti
 - Now you can run the API project.
 - Run `npm run dev` in the QuoteJourney.UI project.
 - That's it, you should now be able to access the nextjs app on http://localhost:3000 and the API on http://localhost:5235
-
-#### TODO:
-
-- [x] Look at adding other authentication methods to our BFF/API Gateway.
-- [x] Add next auth to our BFF.

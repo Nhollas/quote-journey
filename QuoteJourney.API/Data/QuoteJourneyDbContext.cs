@@ -10,7 +10,7 @@ public sealed class QuoteJourneyDbContext : DbContext
     {
     }
 
-    public DbSet<Quote?> Quotes { get; set; }
+    public DbSet<Quote> Quotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

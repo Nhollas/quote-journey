@@ -20,10 +20,10 @@ public class QuoteService : IQuoteService
 
     public async Task<Quote> CreateQuoteAsync(string? ownerId)
     {
-        var newQuote = new Quote()
+        var newQuote = new Quote
         {
             Id = new Guid(),
-            OwnerId = ownerId ?? string.Empty,
+            OwnerId = ownerId ?? string.Empty
         };
         
         await _context.Quotes.AddAsync(newQuote);

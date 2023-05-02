@@ -1,3 +1,4 @@
+import { withQuoteAuth } from "authWrappers/withQuoteAuth";
 import { externalApiClient } from "clients";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Vehicle } from "types";
@@ -10,4 +11,4 @@ const getVehicleHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json(vehicle);
 };
 
-export default getVehicleHandler;
+export default withQuoteAuth(getVehicleHandler);
